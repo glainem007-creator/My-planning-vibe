@@ -1,9 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mon Planning Vibe - 30 Jours</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
   <style>
     :root {
       --bg: #0f172a;
@@ -54,22 +57,22 @@
     .pillar-title { font-weight: bold; font-size: 0.85rem; color: var(--primary); margin-bottom: 4px; }
     .pillar-sub { font-size: 0.75rem; color: var(--text-muted); }
 
-    /* Modal pour zoom sur le pilier */
+    /* Modal détaillé */
     .modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 16px; box-sizing: border-box;
+      background: rgba(0,0,0,0.85); align-items: center; justify-content: center; padding: 16px; box-sizing: border-box;
     }
     .modal-content {
-      background: var(--card-bg); border-radius: 12px; padding: 20px; max-width: 400px; width: 100%;
-      border: 1px solid var(--primary);
+      background: var(--card-bg); border-radius: 12px; padding: 20px; max-width: 450px; width: 100%;
+      max-height: 85vh; overflow-y: auto; border: 1px solid var(--primary);
     }
-    .close-btn { background: var(--primary); color: #0f172a; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; margin-top: 16px; cursor: pointer; width: 100%; }
+    .close-btn { background: var(--primary); color: #0f172a; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; margin-top: 16px; cursor: pointer; width: 100%; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Mon Planning Vibe</h1>
-    <p class="sub">Objectif 30 Jours de Routine</p>
+    <p class="sub">Programme Équilibré - 30 Jours</p>
 
     <div class="mode-selector">
       <button class="mode-btn active" onclick="setMode('day')">Day Shift</button>
@@ -83,39 +86,39 @@
     </div>
 
     <div class="card">
-      <h2>Les 8 Piliers (Clique pour le détail)</h2>
+      <h2>Les Piliers (Clique pour voir le détail)</h2>
       <div class="pillar-grid">
-        <div class="pillar-card" onclick="openPillar('Sport', 'Session de 20-30 min le matin. Exercices au poids du corps ou cardio léger.')">
+        <div class="pillar-card" onclick="openPillar('1. Sport & Perte de Poids', 'Semaine 1 (Adaptation) :\n- 15 min mobilité + 15 min circuit.\n- Workout A : Squats (3x15), Pompes (3x10), Rowing sac à dos (3x12), Glute bridge (3x15), Planche (3x30s).[span_0](start_span)[span_0](end_span)\n- Règle : Augmente progressivement la résistance avec ton sac à dos[span_1](start_span)[span_1](end_span).')">
           <div class="pillar-title">1. Sport</div>
-          <div class="pillar-sub">Perte de poids (20-30m)</div>
+          <div class="pillar-sub">Poids du corps & Sac lesté</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('Vie Spirituelle', 'Prière, méditation et moments de recueillement quotidien.')">
-          <div class="pillar-title">2. Spirituel</div>
-          <div class="pillar-sub">Prière & Réflexion</div>
+        <div class="pillar-card" onclick="openPillar('2. Anglais (2h30/jour)', 'Semaine 1 (Bases & Diagnostic) :\n- Grammaire (30 min) : Règles de base, sujets/verbes[span_2](start_span)[span_2](end_span)[span_3](start_span)[span_3](end_span).\n- Vocabulaire (20 min) : 8-10 mots techniques de chimie/mines[span_4](start_span)[span_4](end_span)[span_5](start_span)[span_5](end_span).\n- Écoute/Prononciation (30 min) : Sons américains (Rachel s English), shadowing[span_6](start_span)[span_6](end_span)[span_7](start_span)[span_7](end_span).\n- Technique & Output : Résumé de textes scientifiques et enregistrement vocal[span_8](start_span)[span_8](end_span).')">
+          <div class="pillar-title">2. Anglais</div>
+          <div class="pillar-sub">Américain, IELTS & Tech</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('Chimie & Métallurgie', 'Révision des principes fondamentaux et études techniques de labo.')">
+        <div class="pillar-card" onclick="openPillar('3. Chimie & Métallurgie', 'Objectifs du mois :\n- Révision des solutions étalons et spectrophotométrie AAS.\n- Métallurgie extractive : lixiviation, SX, Electrowinning (EW).\n- Saponification et upcycling d huiles usées.')">
           <div class="pillar-title">3. Chimie</div>
-          <div class="pillar-sub">Métallurgie & Labo</div>
+          <div class="pillar-sub">Labo & Métallurgie</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('Data Analysis', '1h quotidienne prioritaire : Python, statistiques et manipulation de données.')">
+        <div class="pillar-card" onclick="openPillar('4. Data Analysis & Python', 'Semaine 1 :\n- Fondamentaux de Python pour la Data (Variables, listes, boucles).\n- Semaine 2-3 : Pandas, NumPy et manipulation de fichiers CSV de production.\n- Semaine 4 : Visualisation Matplotlib et mini-projet d analyse.')">
           <div class="pillar-title">4. Data Analysis</div>
           <div class="pillar-sub">Module Prioritaire (1h)</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('Anglais', 'Pratique orale, vocabulaire technique et écoute active.')">
-          <div class="pillar-title">5. Anglais</div>
-          <div class="pillar-sub">Accent & IELTS</div>
+        <div class="pillar-card" onclick="openPillar('5. Excel Professionnel', 'Semaine 1 : Interface, tableaux, filtres, fonctions logiques (IF, VLOOKUP)[span_9](start_span)[span_9](end_span).\nSemaine 2 : Tableaux Croisés Dynamiques et statistiques (STDEV)[span_10](start_span)[span_10](end_span).\nSemaine 3 : Chimie & Métallurgie (Bilans massiques, calcul de récupération du cuivre ex: 85%)[span_11](start_span)[span_11](end_span)[span_12](start_span)[span_12](end_span).\nSemaine 4 : Dashboards et Power Query[span_13](start_span)[span_13](end_span)[span_14](start_span)[span_14](end_span).')">
+          <div class="pillar-title">5. Excel / Python</div>
+          <div class="pillar-sub">Tableaux de bord industriels</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('Excel & Python', 'Exercices pratiques sur tableurs et scripts d automation.')">
-          <div class="pillar-title">6. Excel / Python</div>
-          <div class="pillar-sub">Maîtrise technique</div>
+        <div class="pillar-card" onclick="openPillar('6. Éloquence & Voix', 'Semaine 1 : Respiration diaphragmatique et articulation.\nSemaine 2 : Donner vie aux textes (intonations, pauses).\nSemaine 3 : Accompagner le prédicateur (rythme et précision).\nSemaine 4 : Lecture de récits et Psaumes à haute voix.')">
+          <div class="pillar-title">6. Éloquence</div>
+          <div class="pillar-sub">Diction & Lecture vocale</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('Éloquence Biblique', 'Préparation aux lectures, prise de parole et diction pour l église.')">
-          <div class="pillar-title">7. Éloquence</div>
-          <div class="pillar-sub">Lecture biblique</div>
+        <div class="pillar-card" onclick="openPillar('7. Finance & Autoformation', 'Semaine 1 : Qu est-ce que l argent, budget personnel[span_15](start_span)[span_15](end_span).\nSemaine 2 : Banques, épargne de précaution, intérêts composés[span_16](start_span)[span_16](end_span).\nSemaine 3 : Entreprise, chiffre d affaires, trésorerie et rentabilité[span_17](start_span)[span_17](end_span)[span_18](start_span)[span_18](end_span).\nSemaine 4 : Bourse, actifs et plan financier sur 5 ans[span_19](start_span)[span_19](end_span).')">
+          <div class="pillar-title">7. Autoformation</div>
+          <div class="pillar-sub">Éducation financière</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('Autoformation', 'Projets annexes et lectures de développement personnel.')">
-          <div class="pillar-title">8. Autoformation</div>
-          <div class="pillar-sub">Projets personnels</div>
+        <div class="pillar-card" onclick="openPillar('8. Projets Domestiques', 'Expérimentations pratiques :\n- Saponification à froid et à chaud (huile de tournesol usée / KOH).\n- Essais de décantation et mesures de laboratoire.')">
+          <div class="pillar-title">8. Projets</div>
+          <div class="pillar-sub">Formulations & Labo maison</div>
         </div>
       </div>
     </div>
@@ -124,7 +127,7 @@
   <div class="modal" id="modal">
     <div class="modal-content">
       <h3 id="modal-title" style="color:var(--primary); margin-top:0;"></h3>
-      <p id="modal-desc" style="color:var(--text); font-size:0.95rem; line-height:1.4;"></p>
+      <p id="modal-desc" style="color:var(--text); font-size:0.9rem; line-height:1.5; white-space: pre-line;"></p>
       <button class="close-btn" onclick="closeModal()">Fermer</button>
     </div>
   </div>
@@ -132,26 +135,26 @@
   <script>
     const schedules = {
       day: [
-        { time: "04:00 - 04:30", task: "Réveil & Sport rapide (20-30 min)" },
+        { time: "04:00 - 04:30", task: "Réveil & Sport rapide / Mobilité" },
         { time: "05:00 - 19:00", task: "Garde du jour (Day Shift)" },
-        { time: "19:30 - 20:30", task: "Data Analysis (Module Prioritaire - 1h)" },
-        { time: "20:30 - 21:30", task: "Repas, Vie spirituelle & Repos" },
-        { time: "21:30", task: "Coucher / Sommeil" }
+        { time: "19:30 - 20:30", task: "Data Analysis ou Anglais (1h ciblée)" },
+        { time: "20:30 - 21:30", task: "Détente, Repas & Récupération" },
+        { time: "21:30", task: "Coucher / Sommeil réparateur" }
       ],
       night: [
-        { time: "07:30 - 14:00", task: "Sommeil & Récupération obligatoire" },
-        { time: "14:00 - 14:30", task: "Réveil & Sport doux (20 min)" },
-        { time: "15:00 - 16:00", task: "Data Analysis ou Anglais (1h)" },
+        { time: "07:30 - 14:00", task: "Sommeil & Récupération obligatoire après garde" },
+        { time: "14:00 - 14:30", task: "Réveil & Étirements doux (20 min)" },
+        { time: "15:00 - 16:00", task: "Session légère : Anglais ou Lecture financière (1h)" },
         { time: "17:00 - 07:00", task: "Garde de nuit (Night Shift)" }
       ],
       repos: [
-        { time: "06:00 - 06:40", task: "Réveil & Séance Sport complète" },
-        { time: "07:00 - 08:30", task: "Vie Spirituelle & Éloquence biblique" },
-        { time: "09:00 - 11:00", task: "Bloc 1 : Chimie & Métallurgie" },
-        { time: "11:00 - 12:30", task: "Bloc 2 : Data Analysis (1h30)" },
-        { time: "14:00 - 16:00", task: "Bloc 3 : Anglais & Excel / Python" },
-        { time: "16:30 - 18:00", task: "Projets personnels & Lecture" },
-        { time: "22:00", task: "Sommeil réparateur" }
+        { time: "06:00 - 06:45", task: "Séance Sport complète (Workout A ou B + Sac lesté)" },
+        { time: "07:00 - 08:00", task: "Anglais approfondi (Grammaire + Prononciation)" },
+        { time: "09:00 - 11:00", task: "Bloc 1 : Chimie, Métallurgie & Labo" },
+        { time: "11:00 - 12:30", task: "Bloc 2 : Data Analysis & Excel Industriel" },
+        { time: "14:00 - 15:30", task: "Bloc 3 : Éloquence & Finance / Autoformation" },
+        { time: "16:00 - 17:30", task: "Projets domestiques (Saponification / Labo)" },
+        { time: "22:00", task: "Sommeil" }
       ]
     };
 
@@ -162,7 +165,7 @@
       const titleMap = {
         day: "Planning : Day Shift (5h - 19h)",
         night: "Planning : Night Shift (17h - 7h)",
-        repos: "Planning : Jour de Repos (Complet)"
+        repos: "Planning : Jour de Repos (Complet & Équilibré)"
       };
       document.getElementById('schedule-title').innerText = titleMap[mode];
 
@@ -185,8 +188,17 @@
       document.getElementById('modal').style.display = 'none';
     }
 
-    // Initialisation
+    // Initialisation par défaut sur Day Shift
     setMode('day');
+
+    // Enregistrement du Service Worker pour le mode Hors-Ligne
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(() => console.log('Mode hors-ligne activé avec succès !'))
+          .catch((err) => console.log('Erreur Service Worker :', err));
+      });
+    }
   </script>
 </body>
 </html>
