@@ -1,1 +1,192 @@
-index.html [generated with web_code_canvas tool]
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Planning Vibe - 30 Jours</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --primary: #38bdf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --accent: #10b981;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 16px;
+    }
+    .container { max-width: 600px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; text-align: center; color: var(--primary); margin-bottom: 4px; }
+    p.sub { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 0; }
+    
+    .mode-selector {
+      display: flex; gap: 8px; margin: 16px 0; background: var(--card-bg); padding: 6px; border-radius: 12px;
+    }
+    .mode-btn {
+      flex: 1; border: none; background: transparent; color: var(--text-muted); padding: 10px 4px;
+      font-size: 0.85rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s;
+    }
+    .mode-btn.active { background: var(--primary); color: #0f172a; }
+
+    .card {
+      background: var(--card-bg); border-radius: 12px; padding: 16px; margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+    .card h2 { font-size: 1.1rem; margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+
+    .timeline-item {
+      display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .timeline-item:last-child { border-bottom: none; }
+    .time { font-weight: bold; color: var(--primary); font-size: 0.85rem; min-width: 60px; }
+    .task-desc { font-size: 0.9rem; flex: 1; }
+
+    .pillar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .pillar-card {
+      background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer;
+    }
+    .pillar-title { font-weight: bold; font-size: 0.85rem; color: var(--primary); margin-bottom: 4px; }
+    .pillar-sub { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* Modal pour zoom sur le pilier */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 16px; box-sizing: border-box;
+    }
+    .modal-content {
+      background: var(--card-bg); border-radius: 12px; padding: 20px; max-width: 400px; width: 100%;
+      border: 1px solid var(--primary);
+    }
+    .close-btn { background: var(--primary); color: #0f172a; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; margin-top: 16px; cursor: pointer; width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mon Planning Vibe</h1>
+    <p class="sub">Objectif 30 Jours de Routine</p>
+
+    <div class="mode-selector">
+      <button class="mode-btn active" onclick="setMode('day')">Day Shift</button>
+      <button class="mode-btn" onclick="setMode('night')">Night Shift</button>
+      <button class="mode-btn" onclick="setMode('repos')">Repos</button>
+    </div>
+
+    <div class="card">
+      <h2 id="schedule-title">Planning : Day Shift (5h - 19h)</h2>
+      <div id="timeline"></div>
+    </div>
+
+    <div class="card">
+      <h2>Les 8 Piliers (Clique pour le détail)</h2>
+      <div class="pillar-grid">
+        <div class="pillar-card" onclick="openPillar('Sport', 'Session de 20-30 min le matin. Exercices au poids du corps ou cardio léger.')">
+          <div class="pillar-title">1. Sport</div>
+          <div class="pillar-sub">Perte de poids (20-30m)</div>
+        </div>
+        <div class="pillar-card" onclick="openPillar('Vie Spirituelle', 'Prière, méditation et moments de recueillement quotidien.')">
+          <div class="pillar-title">2. Spirituel</div>
+          <div class="pillar-sub">Prière & Réflexion</div>
+        </div>
+        <div class="pillar-card" onclick="openPillar('Chimie & Métallurgie', 'Révision des principes fondamentaux et études techniques de labo.')">
+          <div class="pillar-title">3. Chimie</div>
+          <div class="pillar-sub">Métallurgie & Labo</div>
+        </div>
+        <div class="pillar-card" onclick="openPillar('Data Analysis', '1h quotidienne prioritaire : Python, statistiques et manipulation de données.')">
+          <div class="pillar-title">4. Data Analysis</div>
+          <div class="pillar-sub">Module Prioritaire (1h)</div>
+        </div>
+        <div class="pillar-card" onclick="openPillar('Anglais', 'Pratique orale, vocabulaire technique et écoute active.')">
+          <div class="pillar-title">5. Anglais</div>
+          <div class="pillar-sub">Accent & IELTS</div>
+        </div>
+        <div class="pillar-card" onclick="openPillar('Excel & Python', 'Exercices pratiques sur tableurs et scripts d automation.')">
+          <div class="pillar-title">6. Excel / Python</div>
+          <div class="pillar-sub">Maîtrise technique</div>
+        </div>
+        <div class="pillar-card" onclick="openPillar('Éloquence Biblique', 'Préparation aux lectures, prise de parole et diction pour l église.')">
+          <div class="pillar-title">7. Éloquence</div>
+          <div class="pillar-sub">Lecture biblique</div>
+        </div>
+        <div class="pillar-card" onclick="openPillar('Autoformation', 'Projets annexes et lectures de développement personnel.')">
+          <div class="pillar-title">8. Autoformation</div>
+          <div class="pillar-sub">Projets personnels</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3 id="modal-title" style="color:var(--primary); margin-top:0;"></h3>
+      <p id="modal-desc" style="color:var(--text); font-size:0.95rem; line-height:1.4;"></p>
+      <button class="close-btn" onclick="closeModal()">Fermer</button>
+    </div>
+  </div>
+
+  <script>
+    const schedules = {
+      day: [
+        { time: "04:00 - 04:30", task: "Réveil & Sport rapide (20-30 min)" },
+        { time: "05:00 - 19:00", task: "Garde du jour (Day Shift)" },
+        { time: "19:30 - 20:30", task: "Data Analysis (Module Prioritaire - 1h)" },
+        { time: "20:30 - 21:30", task: "Repas, Vie spirituelle & Repos" },
+        { time: "21:30", task: "Coucher / Sommeil" }
+      ],
+      night: [
+        { time: "07:30 - 14:00", task: "Sommeil & Récupération obligatoire" },
+        { time: "14:00 - 14:30", task: "Réveil & Sport doux (20 min)" },
+        { time: "15:00 - 16:00", task: "Data Analysis ou Anglais (1h)" },
+        { time: "17:00 - 07:00", task: "Garde de nuit (Night Shift)" }
+      ],
+      repos: [
+        { time: "06:00 - 06:40", task: "Réveil & Séance Sport complète" },
+        { time: "07:00 - 08:30", task: "Vie Spirituelle & Éloquence biblique" },
+        { time: "09:00 - 11:00", task: "Bloc 1 : Chimie & Métallurgie" },
+        { time: "11:00 - 12:30", task: "Bloc 2 : Data Analysis (1h30)" },
+        { time: "14:00 - 16:00", task: "Bloc 3 : Anglais & Excel / Python" },
+        { time: "16:30 - 18:00", task: "Projets personnels & Lecture" },
+        { time: "22:00", task: "Sommeil réparateur" }
+      ]
+    };
+
+    function setMode(mode) {
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const titleMap = {
+        day: "Planning : Day Shift (5h - 19h)",
+        night: "Planning : Night Shift (17h - 7h)",
+        repos: "Planning : Jour de Repos (Complet)"
+      };
+      document.getElementById('schedule-title').innerText = titleMap[mode];
+
+      const container = document.getElementById('timeline');
+      container.innerHTML = schedules[mode].map(item => `
+        <div class="timeline-item">
+          <div class="time">${item.time}</div>
+          <div class="task-desc">${item.task}</div>
+        </div>
+      `).join('');
+    }
+
+    function openPillar(title, desc) {
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-desc').innerText = desc;
+      document.getElementById('modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+
+    // Initialisation
+    setMode('day');
+  </script>
+</body>
+</html>
