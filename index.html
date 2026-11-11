@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -28,14 +27,20 @@
     h1 { font-size: 1.5rem; text-align: center; color: var(--primary); margin-bottom: 4px; }
     p.sub { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 0; }
     
+    .control-panel {
+      background: var(--card-bg); padding: 12px; border-radius: 12px; margin: 16px 0; border: 1px solid var(--border);
+    }
+    .control-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.9rem; font-weight: bold; }
+    .control-row select { background: var(--bg); color: var(--primary); border: 1px solid var(--border); padding: 6px; border-radius: 6px; font-weight: bold; }
+
     .mode-selector {
-      display: flex; gap: 8px; margin: 16px 0; background: var(--card-bg); padding: 6px; border-radius: 12px;
+      display: flex; gap: 6px; margin-top: 8px;
     }
     .mode-btn {
-      flex: 1; border: none; background: transparent; color: var(--text-muted); padding: 10px 4px;
-      font-size: 0.85rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s;
+      flex: 1; border: none; background: var(--bg); color: var(--text-muted); padding: 8px 4px;
+      font-size: 0.8rem; font-weight: 600; border-radius: 6px; cursor: pointer; transition: 0.2s; border: 1px solid var(--border);
     }
-    .mode-btn.active { background: var(--primary); color: #0f172a; }
+    .mode-btn.active { background: var(--primary); color: #0f172a; border-color: var(--primary); }
 
     .card {
       background: var(--card-bg); border-radius: 12px; padding: 16px; margin-bottom: 16px;
@@ -47,13 +52,14 @@
       display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border);
     }
     .timeline-item:last-child { border-bottom: none; }
-    .time { font-weight: bold; color: var(--primary); font-size: 0.85rem; min-width: 60px; }
+    .time { font-weight: bold; color: var(--primary); font-size: 0.85rem; min-width: 75px; }
     .task-desc { font-size: 0.9rem; flex: 1; }
 
     .pillar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .pillar-card {
-      background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer;
+      background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s;
     }
+    .pillar-card:hover { border-color: var(--primary); }
     .pillar-title { font-weight: bold; font-size: 0.85rem; color: var(--primary); margin-bottom: 4px; }
     .pillar-sub { font-size: 0.75rem; color: var(--text-muted); }
 
@@ -61,6 +67,7 @@
     .modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.85); align-items: center; justify-content: center; padding: 16px; box-sizing: border-box;
+      z-index: 1000;
     }
     .modal-content {
       background: var(--card-bg); border-radius: 12px; padding: 20px; max-width: 450px; width: 100%;
@@ -72,53 +79,66 @@
 <body>
   <div class="container">
     <h1>Mon Planning Vibe</h1>
-    <p class="sub">Programme Équilibré - 30 Jours</p>
+    <p class="sub">Programme Maîtrisé - Cycle 30 Jours</p>
 
-    <div class="mode-selector">
-      <button class="mode-btn active" onclick="setMode('day')">Day Shift</button>
-      <button class="mode-btn" onclick="setMode('night')">Night Shift</button>
-      <button class="mode-btn" onclick="setMode('repos')">Repos</button>
+    <!-- Panneau de contrôle du Jour et du Mode -->
+    <div class="control-panel">
+      <div class="control-row">
+        <span>Progression du Défi :</span>
+        <select id="day-select" onchange="updateDay()">
+          <!-- Généré automatiquement de Day 1 à 30 -->
+        </select>
+      </div>
+      <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;" id="week-indicator">Semaine 1 : Fondations et Adaptation</div>
+      
+      <div class="mode-selector">
+        <button class="mode-btn active" onclick="setMode('day')">Day Shift</button>
+        <button class="mode-btn" onclick="setMode('night')">Night Shift</button>
+        <button class="mode-btn" onclick="setMode('repos1')">Repos 1 (Douceur)</button>
+        <button class="mode-btn" onclick="setMode('repos2')">Repos 2 (Puissance)</button>
+        <button class="mode-btn" onclick="setMode('repos3')">Repos 3 (Projets)</button>
+      </div>
     </div>
 
     <div class="card">
-      <h2 id="schedule-title">Planning : Day Shift (5h - 19h)</h2>
+      <h2 id="schedule-title">Planning du jour</h2>
       <div id="timeline"></div>
     </div>
 
     <div class="card">
-      <h2>Les Piliers (Clique pour voir le détail)</h2>
+      <h2>Les 7 Piliers (Détails par Jour & Semaine)</h2>
       <div class="pillar-grid">
-        <div class="pillar-card" onclick="openPillar('1. Sport & Perte de Poids', 'Semaine 1 (Adaptation) :\n- 15 min mobilité + 15 min circuit.\n- Workout A : Squats (3x15), Pompes (3x10), Rowing sac à dos (3x12), Glute bridge (3x15), Planche (3x30s).[span_0](start_span)[span_0](end_span)\n- Règle : Augmente progressivement la résistance avec ton sac à dos[span_1](start_span)[span_1](end_span).')">
+        <div class="pillar-card" onclick="openPillar('1. Sport & Perte de Poids')">
           <div class="pillar-title">1. Sport</div>
-          <div class="pillar-sub">Poids du corps & Sac lesté</div>
+          <div class="pillar-sub" id="prev-sport">Voir le programme</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('2. Anglais (2h30/jour)', 'Semaine 1 (Bases & Diagnostic) :\n- Grammaire (30 min) : Règles de base, sujets/verbes[span_2](start_span)[span_2](end_span)[span_3](start_span)[span_3](end_span).\n- Vocabulaire (20 min) : 8-10 mots techniques de chimie/mines[span_4](start_span)[span_4](end_span)[span_5](start_span)[span_5](end_span).\n- Écoute/Prononciation (30 min) : Sons américains (Rachel s English), shadowing[span_6](start_span)[span_6](end_span)[span_7](start_span)[span_7](end_span).\n- Technique & Output : Résumé de textes scientifiques et enregistrement vocal[span_8](start_span)[span_8](end_span).')">
+        <div class="pillar-card" onclick="openPillar('2. Anglais (Américain & IELTS)')">
           <div class="pillar-title">2. Anglais</div>
-          <div class="pillar-sub">Américain, IELTS & Tech</div>
+          <div class="pillar-sub" id="prev-anglais">Voir le programme</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('3. Chimie & Métallurgie', 'Objectifs du mois :\n- Révision des solutions étalons et spectrophotométrie AAS.\n- Métallurgie extractive : lixiviation, SX, Electrowinning (EW).\n- Saponification et upcycling d huiles usées.')">
+        <div class="pillar-card" onclick="openPillar('3. Chimie & Métallurgie')">
           <div class="pillar-title">3. Chimie</div>
-          <div class="pillar-sub">Labo & Métallurgie</div>
+          <div class="pillar-sub" id="prev-chimie">Voir le programme</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('4. Data Analysis & Python', 'Semaine 1 :\n- Fondamentaux de Python pour la Data (Variables, listes, boucles).\n- Semaine 2-3 : Pandas, NumPy et manipulation de fichiers CSV de production.\n- Semaine 4 : Visualisation Matplotlib et mini-projet d analyse.')">
+        <div class="pillar-card" onclick="openPillar('4. Data Analysis & Python')">
           <div class="pillar-title">4. Data Analysis</div>
-          <div class="pillar-sub">Module Prioritaire (1h)</div>
+          <div class="pillar-sub" id="prev-data">Voir le programme</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('5. Excel Professionnel', 'Semaine 1 : Interface, tableaux, filtres, fonctions logiques (IF, VLOOKUP)[span_9](start_span)[span_9](end_span).\nSemaine 2 : Tableaux Croisés Dynamiques et statistiques (STDEV)[span_10](start_span)[span_10](end_span).\nSemaine 3 : Chimie & Métallurgie (Bilans massiques, calcul de récupération du cuivre ex: 85%)[span_11](start_span)[span_11](end_span)[span_12](start_span)[span_12](end_span).\nSemaine 4 : Dashboards et Power Query[span_13](start_span)[span_13](end_span)[span_14](start_span)[span_14](end_span).')">
+        <div class="pillar-card" onclick="openPillar('5. Excel & Python Industriel')">
           <div class="pillar-title">5. Excel / Python</div>
-          <div class="pillar-sub">Tableaux de bord industriels</div>
+          <div class="pillar-sub" id="prev-excel">Voir le programme</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('6. Éloquence & Voix', 'Semaine 1 : Respiration diaphragmatique et articulation.\nSemaine 2 : Donner vie aux textes (intonations, pauses).\nSemaine 3 : Accompagner le prédicateur (rythme et précision).\nSemaine 4 : Lecture de récits et Psaumes à haute voix.')">
+        <div class="pillar-card" onclick="openPillar('6. Éloquence & Voix Biblique')">
           <div class="pillar-title">6. Éloquence</div>
-          <div class="pillar-sub">Diction & Lecture vocale</div>
+          <div class="pillar-sub" id="prev-elo">Voir le programme</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('7. Finance & Autoformation', 'Semaine 1 : Qu est-ce que l argent, budget personnel[span_15](start_span)[span_15](end_span).\nSemaine 2 : Banques, épargne de précaution, intérêts composés[span_16](start_span)[span_16](end_span).\nSemaine 3 : Entreprise, chiffre d affaires, trésorerie et rentabilité[span_17](start_span)[span_17](end_span)[span_18](start_span)[span_18](end_span).\nSemaine 4 : Bourse, actifs et plan financier sur 5 ans[span_19](start_span)[span_19](end_span).')">
-          <div class="pillar-title">7. Autoformation</div>
-          <div class="pillar-sub">Éducation financière</div>
+        <div class="pillar-card" onclick="openPillar('7. Finance & Autoformation')">
+          <div class="pillar-title">7. Finance</div>
+          <div class="pillar-sub" id="prev-fin">Voir le programme</div>
         </div>
-        <div class="pillar-card" onclick="openPillar('8. Projets Domestiques', 'Expérimentations pratiques :\n- Saponification à froid et à chaud (huile de tournesol usée / KOH).\n- Essais de décantation et mesures de laboratoire.')">
-          <div class="pillar-title">8. Projets</div>
-          <div class="pillar-sub">Formulations & Labo maison</div>
+        <div class="pillar-card" onclick="openPillar('8. Projets Domestiques & Labo')">
+          <div class="pillar-title">8. Projets Labo</div>
+          <div class="pillar-sub" id="prev-proj">Voir le programme</div>
         </div>
       </div>
     </div>
@@ -133,41 +153,66 @@
   </div>
 
   <script>
+    // Initialisation du sélecteur de jours (1 à 30)
+    const select = document.getElementById('day-select');
+    for(let i=1; i<=30; i++) {
+      let opt = document.createElement('option');
+      opt.value = i;
+      opt.innerText = `Day ${i} / 30`;
+      select.appendChild(opt);
+    }
+
+    let currentMode = 'day';
+    let currentDay = 1;
+
     const schedules = {
       day: [
-        { time: "04:00 - 04:30", task: "Réveil & Sport rapide / Mobilité" },
-        { time: "05:00 - 19:00", task: "Garde du jour (Day Shift)" },
-        { time: "19:30 - 20:30", task: "Data Analysis ou Anglais (1h ciblée)" },
+        { time: "04:00 - 04:30", task: "Réveil & Mobilité / Étirements légers" },
+        { time: "05:00 - 19:00", task: "Garde de Jour (Day Shift - Site minier)" },
+        { time: "19:30 - 20:30", task: "Session ciblée : Data Analysis ou Anglais (1h)" },
         { time: "20:30 - 21:30", task: "Détente, Repas & Récupération" },
         { time: "21:30", task: "Coucher / Sommeil réparateur" }
       ],
       night: [
-        { time: "07:30 - 14:00", task: "Sommeil & Récupération obligatoire après garde" },
+        { time: "07:30 - 14:00", task: "Sommeil & Récupération obligatoire après la garde" },
         { time: "14:00 - 14:30", task: "Réveil & Étirements doux (20 min)" },
-        { time: "15:00 - 16:00", task: "Session légère : Anglais ou Lecture financière (1h)" },
-        { time: "17:00 - 07:00", task: "Garde de nuit (Night Shift)" }
+        { time: "15:00 - 16:00", task: "Session légère : Anglais ou Lecture financière" },
+        { time: "17:00 - 07:00", task: "Garde de Nuit (Night Shift - Site minier)" }
       ],
-      repos: [
-        { time: "06:00 - 06:45", task: "Séance Sport complète (Workout A ou B + Sac lesté)" },
-        { time: "07:00 - 08:00", task: "Anglais approfondi (Grammaire + Prononciation)" },
-        { time: "09:00 - 11:00", task: "Bloc 1 : Chimie, Métallurgie & Labo" },
-        { time: "11:00 - 12:30", task: "Bloc 2 : Data Analysis & Excel Industriel" },
-        { time: "14:00 - 15:30", task: "Bloc 3 : Éloquence & Finance / Autoformation" },
-        { time: "16:00 - 17:30", task: "Projets domestiques (Saponification / Labo)" },
-        { time: "22:00", task: "Sommeil" }
+      repos1: [
+        { time: "07:00 - 08:00", task: "Réveil en douceur & Anglais (Vocabulaire)" },
+        { time: "09:00 - 11:00", task: "Chimie & Métallurgie (Lecture technique / Labo)" },
+        { time: "14:00 - 15:30", task: "Éloquence & Diction (Exercices vocaux)" },
+        { time: "16:00 - 17:00", task: "Marche active / Repos physique post-garde" }
+      ],
+      repos2: [
+        { time: "06:00 - 07:00", task: "Séance Sport Intense (Workout A ou B + Sac lesté)[span_0](start_span)[span_0](end_span)[span_1](start_span)[span_1](end_span)" },
+        { time: "07:30 - 09:00", task: "Anglais Avancé (Grammaire, IELTS, Shadowing)[span_2](start_span)[span_2](end_span)[span_3](start_span)[span_3](end_span)" },
+        { time: "09:30 - 11:30", task: "Data Analysis (Python / Pandas / Automatisation)" },
+        { time: "13:00 - 15:00", task: "Excel Industriel & Bilans Massiques[span_4](start_span)[span_4](end_span)" },
+        { time: "16:00 - 17:30", task: "Finance & Éducation de l'investisseur" }
+      ],
+      repos3: [
+        { time: "07:00 - 08:30", task: "Anglais & Révision des acquis de la semaine" },
+        { time: "09:00 - 11:30", task: "Projets Domestiques & Labo (Saponification / Essais)" },
+        { time: "14:00 - 15:30", task: "Excel Dashboard & Finalisation des projets" },
+        { time: "16:00 - 17:30", task: "Préparation mentale et organisation de la prochaine rotation" }
       ]
     };
 
     function setMode(mode) {
+      currentMode = mode;
       document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
 
-      const titleMap = {
+      const titles = {
         day: "Planning : Day Shift (5h - 19h)",
         night: "Planning : Night Shift (17h - 7h)",
-        repos: "Planning : Jour de Repos (Complet & Équilibré)"
+        repos1: "Repos 1 : Transition & Douceur",
+        repos2: "Repos 2 : Puissance Maximale (Sport & Data)",
+        repos3: "Repos 3 : Projets Labo & Organisation"
       };
-      document.getElementById('schedule-title').innerText = titleMap[mode];
+      document.getElementById('schedule-title').innerText = titles[mode];
 
       const container = document.getElementById('timeline');
       container.innerHTML = schedules[mode].map(item => `
@@ -178,9 +223,76 @@
       `).join('');
     }
 
-    function openPillar(title, desc) {
-      document.getElementById('modal-title').innerText = title;
-      document.getElementById('modal-desc').innerText = desc;
+    function updateDay() {
+      currentDay = parseInt(document.getElementById('day-select').value);
+      let week = Math.ceil(currentDay / 7);
+      if(week > 4) week = 4;
+      document.getElementById('week-indicator').innerText = `Semaine ${week} du Défi 30 Jours`;
+      
+      // Mettre à jour les sous-titres des cartes selon le jour
+      document.getElementById('prev-sport').innerText = `Jour ${currentDay} : Voir la routine`;
+      document.getElementById('prev-anglais').innerText = `Jour ${currentDay} : Voir les tâches`;
+      document.getElementById('prev-chimie').innerText = `Jour ${currentDay} : Chimie & Labo`;
+      document.getElementById('prev-data').innerText = `Jour ${currentDay} : Python / Data`;
+      document.getElementById('prev-excel').innerText = `Jour ${currentDay} : Module Excel`;
+      document.getElementById('prev-elo').innerText = `Jour ${currentDay} : Diction & Voix`;
+      document.getElementById('prev-fin').innerText = `Jour ${currentDay} : Éducation Financière`;
+      document.getElementById('prev-proj').innerText = `Jour ${currentDay} : Formulations Labo`;
+    }
+
+    function openPillar(pillarName) {
+      let content = "";
+      let d = currentDay;
+      let w = Math.ceil(d / 7);
+
+      if(pillarName.includes("Sport")) {
+        content = `🏋️‍♂️ PROGRAMME SPORT - JOUR ${d} (Semaine ${w})\n\n`;
+        if(d % 2 !== 0) {
+          content += `WORKOUT A (Musculature Générale)[span_5](start_span)[span_5](end_span) :\n- Échauffement & Mobilité (10 min)\n- Squats : 3 séries de 15 reps (Sac lesté)[span_6](start_span)[span_6](end_span)\n- Pompes : 3 séries de 10-12 reps[span_7](start_span)[span_7](end_span)\n- Rowing avec sac à dos : 3 séries de 12 reps[span_8](start_span)[span_8](end_span)\n- Glute bridge : 3 séries de 15 reps[span_9](start_span)[span_9](end_span)\n- Planche abdominale : 3 séries de 30 sec[span_10](start_span)[span_10](end_span)`;
+        } else {
+          content += `WORKOUT B (Musculature & Abdominaux)[span_11](start_span)[span_11](end_span)[span_12](start_span)[span_12](end_span) :\n- Footing ou marche rapide (30 min)[span_13](start_span)[span_13](end_span)[span_14](start_span)[span_14](end_span)\n- Fentes arrière : 3 x 10 par jambe[span_15](start_span)[span_15](end_span)[span_16](start_span)[span_16](end_span)\n- Pompes épaules (Pike push-ups) : 3 x 8[span_17](start_span)[span_17](end_span)\n- Soulevé de terre avec sac à dos : 3 x 12[span_18](start_span)[span_18](end_span)\n- Crunchs & Dead bug : 3 x 10[span_19](start_span)[span_19](end_span)`;
+        }
+      } else if(pillarName.includes("Anglais")) {
+        content = `🗣️ ANGLAIS & IELTS - JOUR ${d} (Semaine ${w})\n\n` +
+          `- Grammaire (30 min) : Étude et correction de 5 phrases[span_20](start_span)[span_20](end_span).\n` +
+          `- Vocabulaire (20 min) : 8 mots techniques (Chimie/Métallurgie) avec phrases d'exemple[span_21](start_span)[span_21](end_span)[span_22](start_span)[span_22](end_span).\n` +
+          `- Prononciation (30 min) : Écoute (Rachel's English / Sounds American) et Shadowing[span_23](start_span)[span_23](end_span)[span_24](start_span)[span_24](end_span).\n` +
+          `- Output (30 min) : Enregistrement vocal d'un résumé de 2 minutes[span_25](start_span)[span_25](end_span).`;
+      } else if(pillarName.includes("Chimie")) {
+        content = `🧪 CHIMIE & MÉTALLURGIE - JOUR ${d} (Semaine ${w})\n\n` +
+          `- Objectif du jour : Étude des procédés de laboratoire et de métallurgie extractive.\n` +
+          `- Contrôle de la linéarité en Spectrométrie (AAS/SAAV).\n` +
+          `- Analyse des bilans massiques et des réactions de lixiviation / extraction.`;
+      } else if(pillarName.includes("Data")) {
+        content = `📊 DATA ANALYSIS & PYTHON - JOUR ${d} (Semaine ${w})\n\n` +
+          `- Semaine 1-2 : Fondamentaux Python, structures de données, boucles.\n` +
+          `- Semaine 3-4 : Manipulation de fichiers CSV industriels avec Pandas et NumPy.\n` +
+          `- Exercice : Écriture d'un script de nettoyage de données de laboratoire.`;
+      } else if(pillarName.includes("Excel")) {
+        content = `📗 EXCEL INDUSTRIEL - JOUR ${d} (Semaine ${w})\n\n` +
+          `- Compétence du jour : Fonctions avancées, TCD, Power Query[span_26](start_span)[span_26](end_span)[span_27](start_span)[span_27](end_span)[span_28](start_span)[span_28](end_span).\n` +
+          `- Application Métallurgie : Calcul du taux de récupération du cuivre (Ex: Cuivre récupéré / Cuivre introduit * 100)[span_29](start_span)[span_29](end_span).\n` +
+          `- Création de graphiques de suivi de production.`;
+      } else if(pillarName.includes("Éloquence")) {
+        content = `📖 ÉLOQUENCE & VOIX - JOUR ${d} (Semaine ${w})\n\n` +
+          `- Exercice quotidien (20 min) :\n` +
+          `1. Respiration diaphragmatique et projection vocale[span_30](start_span)[span_30](end_span)[span_31](start_span)[span_31](end_span).\n` +
+          `2. Choix d'un passage (Psaume ou récit)[span_32](start_span)[span_32](end_span)[span_33](start_span)[span_33](end_span).\n` +
+          `3. Lecture à haute voix (3 fois) en marquant les pauses[span_34](start_span)[span_34](end_span)[span_35](start_span)[span_35](end_span).\n` +
+          `4. Enregistrement et auto-évaluation (Puissance, articulation, naturel)[span_36](start_span)[span_36](end_span)[span_37](start_span)[span_37](end_span).`;
+      } else if(pillarName.includes("Finance")) {
+        content = `💰 FINANCE & AUTOFORMATION - JOUR ${d} (Semaine ${w})\n\n` +
+          `- Étude financière du jour : Compréhension des actifs, passifs, budget personnel et gestion de trésorerie d'entreprise[span_38](start_span)[span_38](end_span)[span_39](start_span)[span_39](end_span)[span_40](start_span)[span_40](end_span).\n` +
+          `- Application : Répartition du salaire (Besoins, Épargne, Investissement, Projets)[span_41](start_span)[span_41](end_span).`;
+      } else if(pillarName.includes("Projets")) {
+        content = `🧪 PROJETS DOMESTIQUES & LABO - JOUR ${d} (Semaine ${w})\n\n` +
+          `- Expérimentations pratiques à la maison :\n` +
+          `- Saponification à froid / chaud (Transformation d'huile usée avec KOH).\n` +
+          `- Essais de décantation, mesures de pH et tests de qualité de produits.`;
+      }
+
+      document.getElementById('modal-title').innerText = `${pillarName} (Day ${d})`;
+      document.getElementById('modal-desc').innerText = content;
       document.getElementById('modal').style.display = 'flex';
     }
 
@@ -188,15 +300,16 @@
       document.getElementById('modal').style.display = 'none';
     }
 
-    // Initialisation par défaut sur Day Shift
+    // Initialisation
     setMode('day');
+    updateDay();
 
     // Enregistrement du Service Worker pour le mode Hors-Ligne
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
-          .then(() => console.log('Mode hors-ligne activé avec succès !'))
-          .catch((err) => console.log('Erreur Service Worker :', err));
+          .then(() => console.log('Mode hors-ligne actif'))
+          .catch((err) => console.log('Erreur SW', err));
       });
     }
   </script>
